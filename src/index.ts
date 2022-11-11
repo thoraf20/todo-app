@@ -9,6 +9,7 @@ import logger from './lib/logger'
 import { requestLogger } from './middleware/requestLogger'
 import mongoose from 'mongoose'
 import auth from './middleware/auth'
+import v1Router from './url'
 
 dotenv.config()
 
@@ -34,7 +35,10 @@ app.options("*", cors());
 app.use(cookieParser())
 app.use(requestLogger)
 
-app.use(unless(['/v1/register', '/v1/login'], auth))
+// app.use(unless(['/v1/register', '/v1/login'], auth))
+
+app.use('/v1', v1Router)
+
 
 app.use((req, res) => {
   res.status(httpStatus.NOT_FOUND).send()

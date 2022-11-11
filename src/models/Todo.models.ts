@@ -2,9 +2,18 @@ import { model, Schema } from 'mongoose'
 
 export const enum Status {
   ONGOING = 'ongoing',
-  PENDING = 'pending',
+  NOT_STARTED = 'not_started',
   COMPLETED = 'completed',
   ABANDONED = 'abandoned'
+}
+
+type Items = {
+  itemId :string;
+  itemName: string;
+  itemDescription: string;
+  from?: Date;
+  to?: Date;
+  status?: Status;
 }
 
 type Todo = {
@@ -13,14 +22,7 @@ type Todo = {
   items: Items
 }
 
-type Items = {
-  id :string;
-  name: string;
-  description: string;
-  from: Date;
-  to: Date;
-  status?: Status;
-}
+
 
 
 const schema = new Schema<Todo>({
