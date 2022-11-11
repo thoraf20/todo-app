@@ -1,5 +1,5 @@
 import express from "express";
-import { addIemHandler, createTodoHandler, duplicateTodoHandler, fetchOneItemInTodoHandler, fetchTodosHandler, getAllItemsInTodoHandler, getATodoHandler, updateIemHandler } from "./routes/todo";
+import { addIemHandler, createTodoHandler, deleteTodoHandler, duplicateTodoHandler, fetchOneItemInTodoHandler, fetchTodosHandler, getAllItemsInTodoHandler, getATodoHandler, updateIemHandler } from "./routes/todo";
 
 
 const router = express.Router();
@@ -15,6 +15,9 @@ router.post("/todo/add_item", addIemHandler);
 router.post("/todo/duplicate", duplicateTodoHandler);
 
 router.patch("/todo/update_item", updateIemHandler);
+
+router.delete("/todo/_delete", deleteTodoHandler);
+
 
 
 export default router;

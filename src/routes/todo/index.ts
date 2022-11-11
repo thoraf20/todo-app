@@ -21,7 +21,7 @@ export const createTodoHandler: RequestHandler = async (req, res) => {
 
     return res.status(httpStatus.CREATED).json({
       success: true,
-      message: "Todo created successfully!",
+      message: "List created successfully!",
       data: {
         id: newTodo._id,
         name: newTodo.name,
@@ -152,7 +152,7 @@ export const duplicateTodoHandler: RequestHandler = async (req, res) => {
     if (!TodoExist) {
       return res.status(httpStatus.BAD_REQUEST).json({
         status: false,
-        message: "Todo does not exist",
+        message: "List does not exist",
       })
     }
 
@@ -164,7 +164,7 @@ export const duplicateTodoHandler: RequestHandler = async (req, res) => {
 
     return res.status(httpStatus.CREATED).json({
       success: true,
-      message: "Todo duplicated successfully!",
+      message: "List duplicated successfully!",
       data: duplicatedTodo
     });
 
@@ -266,6 +266,38 @@ export const fetchOneItemInTodoHandler: RequestHandler = async(req, res) => {
       success: true,
       message: "Item fetch successfully!",
       data: item
+    });
+
+  } catch (error) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(error);
+  }
+}
+
+export const deleteTodoHandler: RequestHandler = async(req, res) => {
+  const requestSchema = Joi.object({
+    listId: Joi.string().required(),
+  })
+
+  const { error, value } = requestSchema.validate(req.query)
+
+  if (error) {
+    return res.status(httpStatus.BAD_REQUEST).json({ error: error.message })
+  }
+  try {
+    const listExist = await TodoModel.findById({ _id: value.listId});
+
+    if (!listExist) {
+      return res.status(httpStatus.BAD_REQUEST).json({
+        status: false,
+        message: 'List does not exist'
+      })
+    }
+
+    await TodoService.deleteTodo(value.listId);
+
+    return res.status(httpStatus.OK).json({
+      success: true,
+      message: "List deleted successfully!",
     });
 
   } catch (error) {
