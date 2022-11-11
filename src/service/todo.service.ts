@@ -33,6 +33,12 @@ export default class TodoService {
     return alllTodos
   }
 
+  static async fetchAllItemsInTodo(listId: string) {
+    const alllTodos = await TodoModel.findById({ _id: listId});
+
+    return alllTodos.items
+  }
+
   static async updateItem(itemId: string, data: Partial<typeof TodoModel>) {
     const updatedItem = await TodoModel.updateOne(
       {id: itemId},
@@ -43,7 +49,7 @@ export default class TodoService {
     return updatedItem
   }
 
-  // static async duplplicatelist(data: AddItemDto) {
+  // static async duplicateListItems(itemId: string) {
 
   //   const duplilicatedList = await TodoModel.create(data)
 
