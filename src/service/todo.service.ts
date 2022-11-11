@@ -67,10 +67,10 @@ export default class TodoService {
     return updatedItem
   }
 
-  // static async duplicateListItems(itemId: string) {
+  static async deleteTodo(listId: string) {
 
-  //   const duplilicatedList = await TodoModel.create(data)
+    const duplilicatedList = await TodoModel.findByIdAndRemove({_id: listId})
 
-  //   return duplilicatedList
-  // }
+    return duplilicatedList
+  }
 }
