@@ -28,15 +28,33 @@ export default class TodoService {
   }
 
   static async fetchAllTodos() {
-    const alllTodos = await TodoModel.find();
+    const allTodos = await TodoModel.find();
 
-    return alllTodos
+    return allTodos
+  }
+
+  static async fetchATodo(listId: string) {
+    const todo = await TodoModel.findById({ _id: listId});
+
+    return todo
   }
 
   static async fetchAllItemsInTodo(listId: string) {
-    const alllTodos = await TodoModel.findById({ _id: listId});
+    const todo = await TodoModel.findById({ _id: listId});
 
-    return alllTodos.items
+    return todo.items
+  }
+
+  static async fetchOneItemInTodo(listId: string, itemId: string) {
+    const todo = await TodoModel.findById({ _id: listId});
+
+    const items: any = todo?.items;
+
+    const item = items?.filter((index) => {
+      return index.itemId === itemId 
+    })
+
+    return item
   }
 
   static async updateItem(itemId: string, data: Partial<typeof TodoModel>) {

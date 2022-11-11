@@ -205,3 +205,36 @@ export const getAllItemsInTodoHandler: RequestHandler = async(req, res) => {
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(error);
   }
 }
+
+export const getATodoHandler: RequestHandler = async(req, res) => {
+  const requestSchema = Joi.object({
+    listId: Joi.string().required(),
+  })
+
+  const { error, value } = requestSchema.validate(req.query)
+
+  if (error) {
+    return res.status(httpStatus.BAD_REQUEST).json({ error: error.message })
+  }
+  try {
+    const listExist = await TodoModel.findById({ _id: value.listId});
+
+    if (!listExist) {
+      return res.status(httpStatus.BAD_REQUEST).json({
+        status: false,
+        message: 'List does not exist'
+      })
+    }
+
+    const singleTodo = await TodoService.fetchATodo(value.listId);
+
+    return res.status(httpStatus.OK).json({
+      success: true,
+      message: "Todo fetch successfully!",
+      data: singleTodo
+    });
+
+  } catch (error) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(error);
+  }
+}
