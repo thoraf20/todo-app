@@ -7,7 +7,7 @@ export const enum Status {
   ABANDONED = 'abandoned'
 }
 
-type Items = {
+export type Items = {
   itemId :string;
   itemName: string;
   itemDescription: string;

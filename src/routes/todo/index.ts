@@ -88,3 +88,87 @@ export const fetchTodosHandler: RequestHandler = async (req, res) => {
   }
 }
 
+export const updateIemHandler: RequestHandler = async (req, res) => {
+  const requestSchema = Joi.object({
+    // listId: Joi.string().required(),
+    // itemId: Joi.string().required(),
+    itemName: Joi.string(),
+    itemDescription: Joi.string(),
+    from: Joi.date(),
+    to: Joi.date()
+  })
+
+  const { error, value } = requestSchema.validate(req.body)
+
+  const { listId, itemId } = req.params;
+
+  if (error) {
+    return res.status(httpStatus.BAD_REQUEST).json({ error: error.message })
+  }
+
+  try {
+    const listExist = await TodoModel.findById({ _id: listId });
+
+    if (!listExist) {
+      return res.status(httpStatus.NOT_FOUND).json({
+        status: false,
+        message: 'List does not exist',
+      })
+    }
+
+    const listItems: any = listExist?.items;
+
+    const listToUpdate = listItems?.filter((index) => {
+      return index.itemId === value.itemId 
+    })
+
+    await TodoService.updateItem(value.itemId, value)
+
+    return res.status(httpStatus.CREATED).json({
+      success: true,
+      message: "item updated successfully!",
+    });
+
+  } catch (error) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(error);
+  }
+}
+
+export const duplicateTodoHandler: RequestHandler = async (req, res) => {
+  const requestSchema = Joi.object({
+    listId: Joi.string().required(),
+  })
+
+  const { error, value } = requestSchema.validate(req.body)
+
+  if (error) {
+    return res.status(httpStatus.BAD_REQUEST).json({ error: error.message })
+  }
+
+  try {
+    const TodoExist = await TodoModel.findById({ _id: value.listId})
+    .select({"_id": 0, "createdAt": 0, "updatedAt": 0, "__v": 0});
+
+    if (!TodoExist) {
+      return res.status(httpStatus.BAD_REQUEST).json({
+        status: false,
+        message: "Todo does not exist",
+      })
+    }
+
+    const duplicatedTodo = await TodoService.createTodo({
+      name: TodoExist.name,
+      description: TodoExist.description,
+      items: TodoExist.items
+    });
+
+    return res.status(httpStatus.CREATED).json({
+      success: true,
+      message: "Todo duplicated successfully!",
+      data: duplicatedTodo
+    });
+
+  } catch (error) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(error);
+  }
+}

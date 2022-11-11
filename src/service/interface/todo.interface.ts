@@ -1,8 +1,9 @@
-import { Status } from "../../models/Todo.models";
+import { Items, Status } from "../../models/Todo.models";
 
  export interface ListDto {
   name: string;
   description: string
+  items?: Items
  }
 
  export interface AddItemDto {
@@ -13,4 +14,5 @@ import { Status } from "../../models/Todo.models";
   to?: Date;
   status: Status.NOT_STARTED;
  }
+
  

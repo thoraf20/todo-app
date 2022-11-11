@@ -32,4 +32,21 @@ export default class TodoService {
 
     return alllTodos
   }
+
+  static async updateItem(itemId: string, data: Partial<typeof TodoModel>) {
+    const updatedItem = await TodoModel.updateOne(
+      {id: itemId},
+      {items: data},
+      {upsert: true}
+    )
+
+    return updatedItem
+  }
+
+  // static async duplplicatelist(data: AddItemDto) {
+
+  //   const duplilicatedList = await TodoModel.create(data)
+
+  //   return duplilicatedList
+  // }
 }
