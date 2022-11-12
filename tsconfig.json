@@ -10,7 +10,8 @@
     // "noImplicitAny": true,
     "esModuleInterop": true,
     // "resolveJsonModule": true
-    "skipLibCheck": true 
+    "skipLibCheck": true,
+    "moduleResolution": "Node"
   },
   "exclude": [
     "node_modules",

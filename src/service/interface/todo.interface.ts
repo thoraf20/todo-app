@@ -7,11 +7,9 @@ import { Items, Status } from "../../models/Todo.models";
  }
 
  export interface AddItemDto {
-  listId: string;
+  itemId: string;
   itemName: string;
   itemDescription: string;
-  from?: Date;
-  to?: Date;
   status: Status.NOT_STARTED;
  }
 

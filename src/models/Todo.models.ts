@@ -7,14 +7,12 @@ export const enum Status {
   ABANDONED = 'abandoned'
 }
 
-export type Items = {
+export type Items = [{
   itemId :string;
   itemName: string;
   itemDescription: string;
-  from?: Date;
-  to?: Date;
   status?: Status;
-}
+}]
 
 type Todo = {
   name: string;
@@ -25,13 +23,14 @@ type Todo = {
 
 
 
-const schema = new Schema<Todo>({
-  name: { type: String, required: true },
+const schema = new Schema<Todo>(
+  {
+    name: { type: String, required: true },
 
-  description: { type: String, required: true},
+    description: { type: String, required: true},
 
-  items: [],
-},  
+    items: [],
+  },  
   { collection: 'todo', timestamps: true }
 );
 const TodoModel = model<Todo>('Todo', schema);

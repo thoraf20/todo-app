@@ -1,7 +1,8 @@
 import { RequestHandler } from 'express'
 import httpStatus from 'http-status-codes';
 import Joi from 'joi'
-import TodoModel from '../../models/Todo.models';
+import { v4 as uuidv4 } from 'uuid';
+import TodoModel, { Items, Status } from '../../models/Todo.models';
 import TodoService from '../../service/todo.service';
 
 export const createTodoHandler: RequestHandler = async (req, res) => {
@@ -34,13 +35,11 @@ export const createTodoHandler: RequestHandler = async (req, res) => {
   }
 }
 
-export const addIemHandler: RequestHandler = async (req, res) => {
+export const addItemHandler: RequestHandler = async (req, res) => {
   const requestSchema = Joi.object({
     listId: Joi.string().required(),
     itemName: Joi.string().required(),
     itemDescription: Joi.string().required(),
-    from: Joi.date(),
-    to: Joi.date()
   })
 
   const { error, value } = requestSchema.validate(req.body)
@@ -59,7 +58,18 @@ export const addIemHandler: RequestHandler = async (req, res) => {
       })
     }
 
-    await TodoService.addItemToList(value)
+    const items: any = listExist?.items;
+
+    const listData = {
+      itemId: uuidv4(),
+      itemName: value.itemName,
+      itemDescription: value.itemDescription,
+      status: Status.NOT_STARTED
+    }
+
+    const addedItems = [...items, listData]
+    
+    await TodoService.addItemToList(addedItems, value.listId)
 
     return res.status(httpStatus.CREATED).json({
       success: true,
@@ -94,13 +104,11 @@ export const updateIemHandler: RequestHandler = async (req, res) => {
     // itemId: Joi.string().required(),
     itemName: Joi.string(),
     itemDescription: Joi.string(),
-    from: Joi.date(),
-    to: Joi.date()
   })
 
   const { error, value } = requestSchema.validate(req.body)
 
-  const { listId, itemId } = req.params;
+  const { listId, itemId } = req.query;
 
   if (error) {
     return res.status(httpStatus.BAD_REQUEST).json({ error: error.message })
@@ -119,10 +127,11 @@ export const updateIemHandler: RequestHandler = async (req, res) => {
     const listItems: any = listExist?.items;
 
     const listToUpdate = listItems?.filter((index) => {
-      return index.itemId === value.itemId 
+      return index.itemId === itemId 
     })
 
-    await TodoService.updateItem(value.itemId, value)
+
+    await TodoService.updateItem(String(itemId), value)
 
     return res.status(httpStatus.CREATED).json({
       success: true,
@@ -166,6 +175,56 @@ export const duplicateTodoHandler: RequestHandler = async (req, res) => {
       success: true,
       message: "List duplicated successfully!",
       data: duplicatedTodo
+    });
+
+  } catch (error) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(error);
+  }
+}
+
+export const duplicateTodoItemHandler: RequestHandler = async (req, res) => {
+  const requestSchema = Joi.object({
+    listId: Joi.string().required(),
+    itemId: Joi.string().required(),
+  })
+
+  const { error, value } = requestSchema.validate(req.body)
+
+  if (error) {
+    return res.status(httpStatus.BAD_REQUEST).json({ error: error.message })
+  }
+
+  try {
+    const TodoExist = await TodoModel.findById({ _id: value.listId})
+
+    if (!TodoExist) {
+      return res.status(httpStatus.BAD_REQUEST).json({
+        status: false,
+        message: "List does not exist",
+      })
+    }
+
+    const items: any = TodoExist?.items;
+
+    const itemToUpdate = items?.filter((index) => {
+      return index.itemId === value.itemId 
+    })
+
+    const listData = {
+      itemId: uuidv4(),
+      itemName: itemToUpdate[0].itemName,
+      itemDescription: itemToUpdate[0].itemDescription,
+      status: Status.NOT_STARTED
+    }
+
+    const duplicateItems = [...items, listData]
+
+    const duplicatedItem = await TodoService.addItemToList(duplicateItems, value.listId);
+
+    return res.status(httpStatus.CREATED).json({
+      success: true,
+      message: "Item duplicated successfully!",
+      data: duplicatedItem
     });
 
   } catch (error) {
@@ -298,6 +357,45 @@ export const deleteTodoHandler: RequestHandler = async(req, res) => {
     return res.status(httpStatus.OK).json({
       success: true,
       message: "List deleted successfully!",
+    });
+
+  } catch (error) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(error);
+  }
+}
+
+export const deleteItemInTodoHandler: RequestHandler = async(req, res) => {
+  const requestSchema = Joi.object({
+    listId: Joi.string().required(),
+    itemId: Joi.string().required(),
+  })
+
+  const { error, value } = requestSchema.validate(req.query)
+
+  if (error) {
+    return res.status(httpStatus.BAD_REQUEST).json({ error: error.message })
+  }
+  try {
+    const listExist = await TodoModel.findById({ _id: value.listId});
+
+    if (!listExist) {
+      return res.status(httpStatus.BAD_REQUEST).json({
+        status: false,
+        message: 'List does not exist'
+      })
+    }
+
+    const items: any = listExist?.items;
+
+    const filteredItems: Items = items?.filter((index) => {
+      return index.itemId !== value.itemId 
+    })
+
+    await TodoService.deleteItemInTodo(value.listId, filteredItems);
+
+    return res.status(httpStatus.OK).json({
+      success: true,
+      message: "Item deleted successfully!",
     });
 
   } catch (error) {

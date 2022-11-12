@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import TodoModel, { Status } from "../models/Todo.models";
+import TodoModel, { Items, Status } from "../models/Todo.models";
 import { AddItemDto, ListDto } from "./interface/todo.interface";
 
 export default class TodoService {
@@ -9,19 +9,12 @@ export default class TodoService {
     return createdTodo
   }
 
-  static async addItemToList(item: AddItemDto) {  
-    const listData = {
-      itemId: uuidv4(),
-      itemName: item.itemName,
-      itemDescription: item.itemDescription,
-      from: item.from,
-      to: item.to,
-      status: Status.NOT_STARTED
-    }  
-    const addItem = await TodoModel.updateOne(
-      {_id: item.listId},
-      {items: [listData]},
-      {upsert: true}
+  static async addItemToList(item: any, listId: string) {  
+   
+    const addItem = await TodoModel.findOneAndUpdate(
+      {_id: listId},
+      {items: item},
+      { new: true},
     )
 
     return addItem
@@ -57,11 +50,11 @@ export default class TodoService {
     return item
   }
 
-  static async updateItem(itemId: string, data: Partial<typeof TodoModel>) {
+  static async updateItem(listId: string, data: Partial<typeof TodoModel>) {
     const updatedItem = await TodoModel.updateOne(
-      {id: itemId},
+      {_id: listId},
       {items: data},
-      {upsert: true}
+      { new: true},
     )
 
     return updatedItem
@@ -72,5 +65,15 @@ export default class TodoService {
     const duplilicatedList = await TodoModel.findByIdAndRemove({_id: listId})
 
     return duplilicatedList
+  }
+
+  static async deleteItemInTodo(listId: string, data: Items) {
+    const updateList = await TodoModel.updateOne(
+      {_id: listId},
+      {items: data},
+      {upsert: true}
+    )
+
+    return updateList
   }
 }
