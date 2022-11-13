@@ -1,6 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
-import TodoModel, { Items, Status } from "../models/Todo.models";
-import { AddItemDto, ListDto } from "./interface/todo.interface";
+import TodoModel, { Items } from "../models/Todo.models";
+import { ListDto } from "./interface/todo.interface";
 
 export default class TodoService {
   static async createTodo(list: ListDto) {
@@ -50,10 +49,27 @@ export default class TodoService {
     return item
   }
 
-  static async updateItem(listId: string, data: Partial<typeof TodoModel>) {
+  static async updateList(data) {
     const updatedItem = await TodoModel.updateOne(
-      {_id: listId},
-      {items: data},
+      { _id: data.listId },
+      { $set:
+        {
+          name: data.name, 
+          description: data.description
+        }
+      },
+      { new: true},
+    )
+
+    return updatedItem
+  }
+
+  static async updateListItems(listId: string, item) {
+    const updatedItem = await TodoModel.updateOne(
+      { _id: listId },
+      { $set:
+        {items: item},
+      },
       { new: true},
     )
 
