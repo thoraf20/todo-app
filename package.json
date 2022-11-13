@@ -44,8 +44,9 @@
     "joi": "^17.7.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.7.2",
+    "rimraf": "^3.0.2",
+    "tsc": "^2.0.4",
     "uuid": "^9.0.0",
-    "winston": "^3.8.2",
-    "rimraf": "^3.0.2"
+    "winston": "^3.8.2"
   }
 }
