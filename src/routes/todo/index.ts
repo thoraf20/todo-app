@@ -172,7 +172,7 @@ export const updateListItemsHandler: RequestHandler = async (req, res) => {
 
     const update = [...itemToUpdate, listData]
 
-    await TodoService.updateListItems(value.listId,  update)
+    const updatedList = await TodoService.updateListItems(value.listId,  update)
 
     return res.status(httpStatus.CREATED).json({
       success: true,
