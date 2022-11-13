@@ -98,24 +98,21 @@ export const fetchTodosHandler: RequestHandler = async (req, res) => {
   }
 }
 
-export const updateIemHandler: RequestHandler = async (req, res) => {
+export const updateListHandler: RequestHandler = async (req, res) => {
   const requestSchema = Joi.object({
-    // listId: Joi.string().required(),
-    // itemId: Joi.string().required(),
-    itemName: Joi.string(),
-    itemDescription: Joi.string(),
+    listId: Joi.string().required(),
+    name: Joi.string().required(),
+    description: Joi.string().required(),
   })
 
   const { error, value } = requestSchema.validate(req.body)
-
-  const { listId, itemId } = req.query;
 
   if (error) {
     return res.status(httpStatus.BAD_REQUEST).json({ error: error.message })
   }
 
   try {
-    const listExist = await TodoModel.findById({ _id: listId });
+    const listExist = await TodoModel.findById({ _id: value.listId });
 
     if (!listExist) {
       return res.status(httpStatus.NOT_FOUND).json({
@@ -124,18 +121,62 @@ export const updateIemHandler: RequestHandler = async (req, res) => {
       })
     }
 
-    const listItems: any = listExist?.items;
-
-    const listToUpdate = listItems?.filter((index) => {
-      return index.itemId === itemId 
-    })
-
-
-    await TodoService.updateItem(String(itemId), value)
+    await TodoService.updateList(value)
 
     return res.status(httpStatus.CREATED).json({
       success: true,
-      message: "item updated successfully!",
+      message: "List updated successfully!",
+    });
+
+  } catch (error) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(error);
+  }
+}
+
+export const updateListItemsHandler: RequestHandler = async (req, res) => {
+  const requestSchema = Joi.object({
+    listId: Joi.string().required(),
+    itemId: Joi.string().required(),
+    itemName: Joi.string().required(),
+    itemDescription: Joi.string().required(),
+  })
+
+  const { error, value } = requestSchema.validate(req.body)
+
+  if (error) {
+    return res.status(httpStatus.BAD_REQUEST).json({ error: error.message })
+  }
+
+  try {
+    const listExist = await TodoModel.findById({ _id: value.listId });
+
+    if (!listExist) {
+      return res.status(httpStatus.NOT_FOUND).json({
+        status: false,
+        message: 'List does not exist',
+      })
+    }
+
+    const items: any = listExist?.items;
+
+    const itemToUpdate = items?.filter((index) => {
+      return index.itemId !== value.itemId 
+    })
+
+    const listData = {
+      itemId: value.itemId,
+      itemName: value.itemName,
+      itemDescription: value.itemDescription,
+      status: Status.NOT_STARTED
+    }
+
+    const update = [...itemToUpdate, listData]
+
+    await TodoService.updateListItems(value.listId,  update)
+
+    return res.status(httpStatus.CREATED).json({
+      success: true,
+      message: "List item updated successfully!",
     });
 
   } catch (error) {
@@ -206,14 +247,14 @@ export const duplicateTodoItemHandler: RequestHandler = async (req, res) => {
 
     const items: any = TodoExist?.items;
 
-    const itemToUpdate = items?.filter((index) => {
+    const itemToDuplicate = items?.filter((index) => {
       return index.itemId === value.itemId 
     })
 
     const listData = {
       itemId: uuidv4(),
-      itemName: itemToUpdate[0].itemName,
-      itemDescription: itemToUpdate[0].itemDescription,
+      itemName: itemToDuplicate[0].itemName,
+      itemDescription: itemToDuplicate[0].itemDescription,
       status: Status.NOT_STARTED
     }
 
