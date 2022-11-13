@@ -97,7 +97,7 @@ describe('TodoService', () => {
     })
 
     describe('addItemToList', () => {
-      it('it should return output given the correct input', async () => {
+      it('it should add item list given the correct input', async () => {
 
         const addItemToList = await TodoService.addItemToList(
           '6370f8c8c8b6ba143edb477f', 
@@ -114,7 +114,7 @@ describe('TodoService', () => {
     })
 
     describe('fetctAll Todo List', () => {
-      it('it should return output given the correct input', async () => {
+      it('it should return oall todo list', async () => {
 
         const fetchAllTodos = await TodoService.fetchAllTodos()
 
@@ -138,8 +138,8 @@ describe('TodoService', () => {
       })
     })
 
-    describe('fetct A single', () => {
-      it('it should return output given the correct input', async () => {
+    describe('fetct A single list', () => {
+      it('it should return a single todo list', async () => {
 
         const fetchATodo = await TodoService.fetchATodo('6370f8c8c8b6ba143edb477f')
 
@@ -158,7 +158,7 @@ describe('TodoService', () => {
     })
     
     describe('update List', () => {
-      it('it should return output given the correct input', async () => {
+      it('it should update list', async () => {
 
         const updateList = await TodoService.updateList({
           _id: '6370f8c8c8b6ba143edb477f',
@@ -180,8 +180,8 @@ describe('TodoService', () => {
       })
     })
 
-    describe('update List', () => {
-      it('it should return output given the correct input', async () => {
+    describe('delete List', () => {
+      it('it should delete list', async () => {
 
         const updateList = await TodoService.deleteTodo('6370f8c8c8b6ba143edb477f',)
 
