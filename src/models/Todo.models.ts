@@ -21,8 +21,6 @@ type Todo = {
 }
 
 
-
-
 const schema = new Schema<Todo>(
   {
     name: { type: String, required: true },

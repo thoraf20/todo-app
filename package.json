@@ -2,17 +2,17 @@
   "name": "todo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "build": "rimraf ./build && tsc",
     "start": "npm run build && node build/index.js",
-    "start:dev": "nodemon",
+    "start:dev": "nodemon ./index.ts",
     "test": "jest",
     "lint": "eslint . --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix"
   },
   "keywords": [],
-  "author": "",
+  "author": "Toheeb Rauf",
   "license": "ISC",
   "devDependencies": {
     "@types/compression": "^1.7.2",
@@ -34,7 +34,6 @@
     "helmet": "^6.0.0",
     "jest": "^29.3.1",
     "morgan": "^1.10.0",
-    "node-mocks-http": "^1.12.1",
     "nodemon": "^2.0.20",
     "rimraf": "^3.0.2",
     "ts-jest": "^29.0.3",

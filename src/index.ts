@@ -9,7 +9,7 @@ import logger from './lib/logger'
 import { requestLogger } from './middleware/requestLogger'
 import mongoose from 'mongoose'
 import auth from './middleware/auth'
-import v1Router from './url'
+import v1Router from '../url'
 
 dotenv.config()
 

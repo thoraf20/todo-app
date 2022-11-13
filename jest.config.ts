@@ -5,5 +5,10 @@ const config: Config.InitialOptions = {
   testEnvironment: 'node',
   verbose: true,
   automock: false,
+  transform: {
+    '^.+\\.ts?$': 'ts-jest',
+  },
+  transformIgnorePatterns: ['src/node_modules/'],
+
 }
 export default config

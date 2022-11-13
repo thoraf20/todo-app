@@ -5,7 +5,7 @@ import { addItemHandler, createTodoHandler,
   fetchOneItemInTodoHandler, fetchTodosHandler, 
   getAllItemsInTodoHandler, getATodoHandler, 
   updateListHandler, 
-  updateListItemsHandler} from "./routes/todo";
+  updateListItemsHandler} from "./src/routes/todo";
 
 
 const router = express.Router();
