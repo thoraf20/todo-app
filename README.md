@@ -50,7 +50,7 @@ Note: Make sure you set up the test variable in the .env file
 
 # E-R Design
 
-link: 
+link: https://dbdesigner.page.link/3DGmFgd1HdxeESiX8
 
 # Author
 Toheeb Rauf
