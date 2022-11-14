@@ -12,7 +12,7 @@
     "lint-and-fix": "eslint . --ext .ts --fix"
   },
   "keywords": [],
-  "author": "Toheeb Rauf",
+  "author": "Toheeb Rauf <thoraf20@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "@types/compression": "^1.7.2",
